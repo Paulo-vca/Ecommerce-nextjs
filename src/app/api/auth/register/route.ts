@@ -2,6 +2,8 @@ import { connectDB } from '@/configs/dbConfig';
 import { NextRequest, NextResponse } from 'next/server';
 import User from "@/models/user-model"
 import bcrypt from 'bcryptjs'
+import axios from 'axios';
+
 
 connectDB();
 
