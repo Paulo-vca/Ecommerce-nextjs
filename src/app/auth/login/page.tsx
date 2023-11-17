@@ -15,7 +15,7 @@ interface UserType {
 
 function Login() {
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const router = useRouter(); //erro
   const onLogin = async (values: UserType) => {
     try{
       setLoading(true);
@@ -52,6 +52,7 @@ function Login() {
             className="w-[500px] flex flex-col gap-5"
             layout="vertical"
             onFinish={ onLogin }
+            initialValues={{name: "", email: "", password: ""}}
           >
             <h1 className="text-2xl font-bold">Login</h1>
             <hr />

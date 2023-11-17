@@ -1,54 +1,82 @@
-'use client'
-import { Button, Popover, message } from "antd";
-import  React, { useEffect, useState }  from "react";
+'use client';
+import { Popover, Button, message } from 'antd';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 function LayoutProvider({ children }: { children: React.ReactNode }) {
-
-  const [currentUser, setCurrentUser] = React.useState("")
-  const [loading, setLoading] = useState(false)
+  const router = useRouter();
+  const [currentUser, setCurrentUser] = useState('');
+  const [loading, setLoading] = useState(false);
+  const pathName = usePathname();
+  const isPrivatePage =
+    pathName !== "/auth/login" && pathName !== "/auth/register";
 
   const content = (
-    <div>
-      <p>Content</p>
-      <p>Content</p>
+    <div className="flex flex-col gap-2 p-2">
+      <div
+        className="flex gap-2 items-center cursor-pointer text-md"
+        onClick={() => {
+          router.push('/profile');
+        }}
+      >
+        <i className="ri-user-line text-xl"></i>
+        <span>Profile</span>
+      </div>
+      <div
+        className="flex gap-2 items-center cursor-pointer text-md"
+        onClick={() => {
+          router.push('/logout');
+        }}
+      >
+        <i className="ri-logout-box-r-line"></i>
+        <span>Logout</span>
+      </div>
     </div>
   );
 
   useEffect(() => {
-    getCurrentUser()
-  }, [])
+    1;
+    getCurrentUser();
+  }, []);
 
   const getCurrentUser = async () => {
     try {
       setLoading(true);
-      //get axios in backend
-      setCurrentUser('Bruno')
+      // get axios in backend
+      setCurrentUser('Pvca');
     } catch (error: any) {
-      message.error(error.message)
+      message.error(error.message);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  return(
+  return (
+    <div>
 
-  <div>
-    <div className="bg-primary py-5 px-5 flex justify-between">
-      <div className="flex">
-        <h1 className="2xl font-bolt texte-red-500">Frame Shop</h1>
-      </div>
-      <div className="flex gap-r itens-center">
-        <i className="ri-shooping-cart-line text-white"></i>
-
-        <div>
-          <Popover content={content} title="Title" trigger="click">
-             <div className="flex h-8 w-8 bg-white">{currentUser}</div>
-          </Popover>
+      {isPrivatePage && (
+        <div className="bg-primary py-5 px-5 flex justify-between items-center">
+          <div
+          className="flex cursor-pointer"
+          onClick={() => {
+            router.push("/")
+          }}
+          >
+            <h1 className="text-2xl font-bold text-red-500">Frame</h1>
+            <h1 className="text-2xl font-bold text-gray-500">-</h1>
+            <h1 className="text-2xl font-bold text-blue-500">Shop</h1>
+          </div>
+          <div className="flex gap-5 items-center">
+            <i className="ri-shopping-cart-line text-green-500 text-2xl"></i>
+            <Popover content={content} title="Title" trigger="click">
+              <div className="flex h-8 w-8 bg-white">{currentUser}</div>
+            </Popover>
+          </div>
         </div>
-      </div>
+      )}
+      <div className="p-5">{children}</div>
     </div>
-  </div>
   );
 }
 
-export default LayoutProvider
+export default LayoutProvider;
