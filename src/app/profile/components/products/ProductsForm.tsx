@@ -12,16 +12,29 @@ function ProductsForm({
   showProductsForm,
   setShowProductsForm,
   reloadData,
+  product,
+  setSelectedProducts,
 }: ProductsFormProps) {
 
   const[form] = Form.useForm()
 
   const onFinish = async(values: ProductsFormData) => {
     try{
-      const res = await axios.post("http://localhost:3000/category", values)
-      message.success("Category added successfully")
+
+      if(product){
+        await axios.patch(`http://localhost:3000/product/${product.id}`, values);
+        message.success("Product updated successfully")
+
+      } else{
+
+        const res = await axios.post("http://localhost:3000/category", values)
+        message.success("Product added successfully");
+
+      }
+
       reloadData();
-      setShowProductsForm(false)
+      setShowProductsForm(false);
+      setSelectedProducts(null);
     } catch(error: any){
       message.error(error.message)
     }
@@ -29,10 +42,12 @@ function ProductsForm({
 
   return(
     <Modal
-      title = {<h1 className="text-2xl font-bold text-gray-800"> Add Product(s) </h1>}
+      title = {<h1 className="text-2xl font-bold text-gray-800">
+        {product? "Edit Category" : "Add Product"}</h1>}
       open = {showProductsForm}
       onCancel={() => {
         setShowProductsForm(false)
+        setSelectedProducts(null)
       }}
       centered
       closable={false}
@@ -54,7 +69,7 @@ function ProductsForm({
       <Form.Item
       label="Description"
       name="description"
-      rules={getAntdFieldsRequireRule('Category description is required!')}
+      rules={getAntdFieldsRequireRule('Products description is required!')}
       >
         <textarea />
       </Form.Item>
@@ -70,5 +85,6 @@ interface ProductsFormProps{
   showProductsForm: boolean;
   setShowProductsForm: (show: boolean) => void;
   reloadData: () => void;
-
+  product: any;
+  setSelectedProducts: (product: any) => void;
 }

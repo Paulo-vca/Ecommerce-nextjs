@@ -1,19 +1,20 @@
 'use client';
 import React, { useState } from 'react';
 import { Tabs, TabsProps } from 'antd';
+// import router from 'next/router';
+import { useRouter, useSearchParams } from 'next/navigation';
 import CategoriesList from './components/categories/CategoriesList';
 import ProductsList from './components/products/ProductsList';
 import UserList from './components/user/UserList';
-import { useRouter, useSearchParams } from 'next/navigation';
 
 function Profile() {
 
   const searchParams = useSearchParams()
   const id = searchParams.get("id")
 
-  const [ selectedTab, setSelectedTab] = useState<string>(id || "1")
+  const [selectedTab, setSelectedTab] = useState<string>(id || "1");
 
-  const router = useRouter
+  const router = useRouter();
 
   const items: TabsProps['items'] = [
     {
@@ -40,7 +41,7 @@ function Profile() {
 
 
   return (
-    <div className="p-5">
+    <div className='p-5'>
       <Tabs
       defaultActiveKey="1"
       items={items}

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import CategoryForm from './CategoryForm';
 import axios from 'axios';
 import moment from 'moment';
-
+ 
 function CategoriesList() {
   const [showCategoryForm, setShowCategoryForm] = useState(false);
   const [categories, setCategories] = useState([]);
