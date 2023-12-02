@@ -43,3 +43,9 @@ textarea {
 table {
   border: 1px solid #0b688d !important;
 }
+
+a {
+  text-decoration: none !important;
+  color: #000 !important;
+
+}

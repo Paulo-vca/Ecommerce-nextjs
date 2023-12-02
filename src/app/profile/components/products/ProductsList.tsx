@@ -1,11 +1,10 @@
 'use client'
 
 import { Button, Table, message } from 'antd';
-import { useEffect, useState } from 'react';
-import ProductsForm from './ProductsForm';
 import axios from 'axios';
 import moment from 'moment';
-import { useRouter } from 'next/router';//next/navigation
+import { useRouter } from 'next/navigation'; //next/navigation
+import { useEffect, useState } from 'react';
 
 function ProductsList() {
   const router = useRouter();
@@ -125,12 +124,12 @@ function ProductsList() {
           Add Product
         </Button>
       </div>
-        <Table
-          dataSource={products}
-          columns={columns}
-          loading={loading}
-          rowKey="_id"
-        />
+      <Table
+        columns={columns}
+        dataSource={products}
+        loading={loading}
+        rowKey="_id"
+      ></Table>
     </div>
   );
 }

@@ -1,90 +1,120 @@
-import { getAntdFieldsRequireRule } from "@/helpers/validations";
-import { Form, Modal, message } from "antd"
-import axios from "axios";
+import { getAntdFieldsRequireRule } from '@/helpers/validations';
+import { Button, Form, Upload, message } from 'antd';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
-type ProductsFormData = {
-  name: string;
-  picture: string;
-  description: string;
-}
+function ProductsForm({ setSelectedFiles, loading, onSave}: ProductsFormProps) {
+  const [categories, setCategories] = useState([]);
+  const router = useRouter();
 
-function ProductsForm({
-  showProductsForm,
-  setShowProductsForm,
-  reloadData,
-  product,
-  setSelectedProducts,
-}: ProductsFormProps) {
-
-  const[form] = Form.useForm()
-
-  const onFinish = async(values: ProductsFormData) => {
-    try{
-
-      if(product){
-        await axios.patch(`http://localhost:3000/product/${product.id}`, values);
-        message.success("Product updated successfully")
-
-      } else{
-
-        const res = await axios.post("http://localhost:3000/category", values)
-        message.success("Product added successfully");
-
-      }
-
-      reloadData();
-      setShowProductsForm(false);
-      setSelectedProducts(null);
-    } catch(error: any){
-      message.error(error.message)
+  const getCategories = async () => {
+    try {
+      const res = await axios.get('http://localhost:3000/category');
+      setCategories(res.data);
+    } catch (error: any) {
+      message.error(error.message);
     }
-  }
+  };
 
-  return(
-    <Modal
-      title = {<h1 className="text-2xl font-bold text-gray-800">
-        {product? "Edit Category" : "Add Product"}</h1>}
-      open = {showProductsForm}
-      onCancel={() => {
-        setShowProductsForm(false)
-        setSelectedProducts(null)
-      }}
-      centered
-      closable={false}
-      okText="Save"
-      onOk={() => {
-        form.submit();
-      }}
-    >
+  useEffect(() => {
+    getCategories();
+  }, []);
 
-    <Form layout="vertical" className="flex flex-col gap-5" form={form} onFinish={onFinish}>
-      <Form.Item
-      label="Products Name"
-      name="name"
-      rules={getAntdFieldsRequireRule('Products name is required!')}
+  return (
+    <div>
+      <Form
+        layout="vertical"
+        className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-5"
+        onFinish={onSave}
       >
-        <input type="text" />
-      </Form.Item>
+        <div className="col-span-3">
+          <Form.Item
+            label="Name"
+            name="name"
+            rules={getAntdFieldsRequireRule('Please input product name')}
+          >
+            <input type="text" />
+          </Form.Item>
+        </div>
+        <div className="col-span-3">
+          <Form.Item
+            label="Description"
+            name="description"
+            rules={getAntdFieldsRequireRule('Please input description')}
+          >
+            <textarea />
+          </Form.Item>
+        </div>
+        <Form.Item
+          label="Price"
+          name="price"
+          rules={getAntdFieldsRequireRule('Please input product price')}
+        >
+          <input type="number" />
+        </Form.Item>
 
-      <Form.Item
-      label="Description"
-      name="description"
-      rules={getAntdFieldsRequireRule('Products description is required!')}
-      >
-        <textarea />
-      </Form.Item>
+        <Form.Item
+          label="Category"
+          name="categoryId"
+          rules={getAntdFieldsRequireRule('Please select category')}
+        >
+          <select>
+            <option value="">Select Category</option>
+            {/* loading categories */}
+            {categories.map((category: any) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </Form.Item>
+        <Form.Item
+          label="Count In Stock"
+          name="stock"
+          rules={getAntdFieldsRequireRule('Please input count in stock')}
+        >
+          <input type="number" />
+        </Form.Item>
 
-    </Form>
-
-    </Modal>
-  )
+        <div className="col-span-3">
+          <Upload
+            listType="picture-card"
+            multiple
+            beforeUpload={
+              (file) => {
+                setSelectedFiles((prev: any) => [...prev, file]);
+                return false;
+              }
+            }
+          >Upload</Upload>
+        </div>
+        <div className="col-span-3 gap-5 flex justify-end ">
+          <Button
+            onClick={() => {
+              console.log('back');
+            }}
+          >
+            Back
+          </Button>
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={loading}
+            disabled={loading}
+          >
+            Save
+          </Button>
+        </div>
+      </Form>
+    </div>
+  );
 }
-export default ProductsForm
 
-interface ProductsFormProps{
-  showProductsForm: boolean;
-  setShowProductsForm: (show: boolean) => void;
-  reloadData: () => void;
-  product: any;
-  setSelectedProducts: (product: any) => void;
+export default ProductsForm;
+
+interface ProductsFormProps {
+  setSelectedFiles: any;
+  loading: boolean;
+  onSave: any;
 }

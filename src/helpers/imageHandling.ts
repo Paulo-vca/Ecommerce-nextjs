@@ -1,25 +1,23 @@
 import { firebaseApp } from "@/firebaseConfig"
-import { getDownloadURL, getStorage,ref, uploadBytes } from "firebase/storage"
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage"
 
+export const uploadImageAndReturnUrls= async (files: any) => {
+  try {
+    const imageRefs = await Promise.all(
+      files.map((file: any) => {
+        const storage = getStorage(firebaseApp)
+        const storageRef = ref(storage, `products/${file.name}`)
+        return uploadBytes(storageRef, file)
+      })
+    )
 
-const uploadImageAndReturnUrls = async (files: any) => {
+    const imageUrls = await Promise.all(
+      imageRefs.map((imageRef) => getDownloadURL(imageRef.ref))
+    );
 
-    try {
-      const imageRefs = await Promise.all(
-        files.map((file: any) => {
-          const storage = getStorage(firebaseApp);
-          const storageRef = ref(storage, `products/${file.name}`)
-          return uploadBytes(storageRef, file)
-        })
-      )
+    return imageUrls;
 
-      const imageUrls = await Promise.all(
-        imageRefs.map((imageRef) => getDownloadURL(imageRef.ref))
-      );
-
-      return imageUrls;
-
-    } catch (error: any) {
-      console.log(error)
-    }
+  } catch (error: any) {
+    console.log(error)
+  }
 }
