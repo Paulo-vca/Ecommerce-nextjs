@@ -1,14 +1,15 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+
 import { useRouter } from 'next/navigation';
-import { message } from 'antd';
-import axios from 'axios';
 import { uploadImageAndReturnUrls } from '@/helpers/imageHandling';
+import { message, notification } from 'antd';
+import axios from 'axios';
 import ProductsForm from '../components/products/ProductsForm';
 
 function AddProduct() {
-  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [selectedFiles = [], setSelectedFiles] = useState([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -17,7 +18,7 @@ function AddProduct() {
     description: string;
     price: number;
     stock: number;
-    categoryId: string;
+    rate: 0
   }
 
   interface ImgFormProps {
@@ -25,16 +26,16 @@ function AddProduct() {
     productId: string;
   }
 
-  //save product with imagens
+  // save product with images
   const onSave = async (values: AddFormProps) => {
     try {
       setLoading(true);
       const imgUrls = await uploadImageAndReturnUrls(selectedFiles);
       values.price = Number(values.price);
       values.stock = Number(values.stock);
-      values.categoryId = String(values.categoryId);
+      values.rate = 0;
 
-      //save product info
+      // save product info
       const respProduct = await axios.post(
         'http://localhost:3000/product',
         values
@@ -46,15 +47,23 @@ function AddProduct() {
             url: img,
             productId: respProduct.data.id,
           };
-          console.log(imgForm.url);
 
           axios.post('http://localhost:3000/image', imgForm);
         });
       }
 
-      message.success('Product saved successfully');
+      notification.success({
+        message: 'Product saved successfully',
+        description: `Product ${values.name} saved successfully`,
+      });
+      // console.log(respProduct)
+      // tendo o ID do product fazer um POST em images com as URLs e ID do produto
+      router.push('/profile?id=2');
     } catch (error: any) {
-      message.error(error.message);
+      notification.error({
+        message: 'Error',
+        description: error.message,
+      });
     } finally {
       setLoading(false);
     }

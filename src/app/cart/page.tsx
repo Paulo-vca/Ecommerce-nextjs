@@ -1,16 +1,24 @@
 'use client';
 import { ProductInterface } from '@/interfaces';
-import { CartState } from '@/redux/cartSlice';
+import { CartState, EditProductCart, RemoveProductCart } from '@/redux/cartSlice';
 import { Button } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Image from 'next/image';
 
 function Cart() {
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false)
   const { cartItems }: CartState = useSelector((state: any) => state.cart);
   const dispatch = useDispatch();
 
-  const total = 0;
+  const subTotal = cartItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  )
+
+  const total = subTotal + 50;
+
+  // const total = 0;
 
   return (
     <div className="mt-10">
@@ -66,10 +74,12 @@ function Cart() {
                   }}></i>
                   <span>{item.quantity}</span>
                   <i className="ri-add-line" onClick={() => {
-                    dispatch(EditProductCart({
-                      ...item,
-                      quantity: item.quantity + 1
-                    }))
+                    dispatch(
+                      EditProductCart({
+                        ...item,
+                        quantity: item.quantity + 1,
+                      })
+                    );
                   }}></i>
                 </div>
 
@@ -111,7 +121,9 @@ function Cart() {
                 <span>$ {total}</span>
               </div>
 
-              <Button block type="primary" className="mt-10" onClick={() => {}}>
+              <Button block type="primary" className="mt-10" onClick={() => {
+                setShowCheckoutModal(true)
+              }}>
                 Proceed to Checkout
               </Button>
             </div>
@@ -123,7 +135,15 @@ function Cart() {
           <h1 className="text-sm">Your cart is empty</h1>
         </div>
       )}
-      )
+
+        {showCheckoutModal && (
+          <CheckoutModal
+            setShowCheckoutModal={setShowCheckoutModal0}
+            showCheckoutModal={showCheckoutModal}
+            total={total}
+          />
+        )}
+
     </div>
   );
 }

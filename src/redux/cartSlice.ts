@@ -23,41 +23,39 @@ export const cartSlice = createSlice({
       state.cartItems.push(action.payload);
     },
 
-    RemoveProductCart:(
+    RemoveProductCart: (
       state,
-      action:{
+      action: {
         type: string;
-        payload:ProductInterface;
+        payload: ProductInterface;
       }
-      ) =>{
-        state.cartItems = state.cartItems.filter(
-          (item) => item.id !== action.payload
-        )
-      },
+    ) => {
+      state.cartItems = state.cartItems.filter(
+        (item) => item.id !== action.payload.id
+      );
+    },
 
-      EditProductcart:(
-        state,
-        action: {
-          type: string;
-          payload: ProductInterface;
-        }
-      ) => {
-        state.cartitems = state.cartItems.map((item)) =>
-          Item.id === action.payload.id ? action.payload : item
-          );
-      };
+    EditProductCart: (
+      state,
+      action: {
+        type: string;
+        payload: ProductInterface;
+      }
+    ) => {
+      state.cartItems = state.cartItems.map((item) =>
+        item.id === action.payload.id ? action.payload : item
+      );
+    },
 
+    ClearCart: (state) => {
+      state.cartItems = [];
+    },
   },
-
-  ClearCart: (state) => {
-    state.cartItems = [];
-  },
-},
 });
 
 export const {
   AddProductToCart,
   RemoveProductCart,
-  EditProductcart,
+  EditProductCart,
   ClearCart,
- } = cartSlice.actions;
+} = cartSlice.actions;
