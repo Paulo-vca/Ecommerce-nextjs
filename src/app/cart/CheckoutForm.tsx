@@ -5,6 +5,13 @@ import { useElements } from "@stripe/react-stripe-js";
 import { notification } from "antd";
 import React from "react"
 import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+
+
+type OrderFormData = {
+  name: string;
+  description: string;
+}
 
 function CheckoutForm({
   total,
@@ -53,8 +60,30 @@ function CheckoutForm({
         total
       }
 
+      const onFinish = async(values: OrderFormData) => {
+        try{
+
+          if(order){
+            await axios.patch(`http://localhost:3000/order/${order.id}`, values);
+            message.success("Category updated successfully")
+
+          } else{
+
+            const res = await axios.post("http://localhost:3000/category", values)
+            message.success("Category added successfully");
+
+          }
+
+          reloadData();
+          setShowCategoryForm(false);
+          setSelectedCategory(null);
+        } catch(error: any){
+          message.error(error.message)
+        }
+      }
+
       //save data to backend
-      // e com vcs - POST]
+      // save order data to backend
       // nao esquecer de atualizar estoque
 
       dispatch(ClearCart())
